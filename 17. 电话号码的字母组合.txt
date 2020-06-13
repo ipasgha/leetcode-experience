@@ -1,0 +1,73 @@
+题目链接：https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/
+
+题目详情：
+    给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。
+    给出数字到字母的映射如下（与电话按键相同）：
+    2-abc;3-def;4-ghi;5-jkl;6-mno;7-pqrs;8-tuv;9-wxyz
+    示例:
+        输入："23"
+        输出：["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
+
+解题思路：
+    本题使用回溯法求解。
+    回溯法的总体思路是使用递归，设定恰当的递归控制变量depth，在函数体中使用depth表示函数正在操作的对象，将结果累加到临时结果中。
+    在递归结束时判断结果的正确性并存入全局容器，利用递归退出的先后次序得到字典序的排列结果。
+    递归方法需要维护的变量：
+        全局容器vector<string>：存储最终结果。
+        临时结果string：作为递归的退出条件。
+        递归深度depth;
+        输入字符串from。
+代码：
+class Solution {
+public:
+    std::map<char, char> matches{
+        {'2', 'a'},
+        {'3', 'd'},
+        {'4', 'g'},
+        {'5', 'j'},
+        {'6', 'm'},
+        {'7', 'p'},
+        {'8', 't'},
+        {'9', 'w'}
+    };
+    
+    void func(vector<string>& result, string& target, const string from, int depth){
+        if(target.length() == from.length()){
+            result.push_back(target);
+            return;
+        }
+
+        char temp = matches.find(from[depth])->second;
+
+        target.push_back(temp);
+        func(result, target, from, depth+1);
+        target.pop_back();
+
+        ++temp;
+        target.push_back(temp);
+        func(result, target, from, depth+1);
+        target.pop_back();
+
+        ++temp;
+        target.push_back(temp);
+        func(result, target, from, depth+1);
+        target.pop_back();
+
+        if(from[depth] == '7' || from[depth] == '9'){
+            ++temp;
+            target.push_back(temp);
+            func(result, target, from, depth+1);
+            target.pop_back();
+        }
+    }
+    
+    vector<string> letterCombinations(string digits) {
+        vector<string> result;
+        if(digits.empty())
+            return result;
+        string target;
+        func(result, target, digits, 0);
+        return result;
+    }
+};
+        
